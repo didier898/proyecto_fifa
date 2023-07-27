@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { shuffle } from 'lodash';
+import './Torneo.css'; // Importa tus estilos personalizados aquí
+import './Estilo.css';
 
 const Torneo = () => {
   const [nombreTorneo, setNombreTorneo] = useState('');
@@ -43,32 +45,38 @@ const Torneo = () => {
       }));
       setResultadosSorteo(resultados);
       setSorteoRealizado(true);
+      setLlavesGeneradas(false);
+      setLlaves([]);
     } else {
       alert('Error: La cantidad de participantes debe ser igual a la cantidad de equipos.');
     }
   };
 
-  const handleSortearLlaves = () => {
-    if (resultadosSorteo.length === 0) {
-      alert('Primero debe realizar el sorteo de equipos.');
+  const generarLlaves = () => {
+    const enfrentamientos = [];
+
+    // Asegurarse de que hay al menos 2 participantes
+    if (resultadosSorteo.length < 2) {
+      alert('Error: Se necesitan al menos 2 participantes para generar las llaves.');
       return;
     }
 
+    // Obtener una copia de los resultados del sorteo y barajarlos
     const participantesAleatorios = shuffle([...resultadosSorteo]);
-    const nuevasLlaves = [];
+
+    // Agrupar los participantes en enfrentamientos
     for (let i = 0; i < participantesAleatorios.length; i += 2) {
-      if (i + 1 < participantesAleatorios.length) {
-        nuevasLlaves.push({
-          enfrentamiento: `${participantesAleatorios[i].participante}, equipo ${participantesAleatorios[i].equipo} vs ${participantesAleatorios[i + 1].participante}, equipo ${participantesAleatorios[i + 1].equipo}`,
-        });
-      } else {
-        // Participante sin pareja, pasa directamente a la siguiente fase
-        nuevasLlaves.push({
-          enfrentamiento: `${participantesAleatorios[i].participante}, equipo ${participantesAleatorios[i].equipo} (Pasa automáticamente a la siguiente fase)`,
-        });
-      }
+      const enfrentamiento = {
+        participanteA: participantesAleatorios[i].participante,
+        equipoA: participantesAleatorios[i].equipo,
+        participanteB: participantesAleatorios[i + 1].participante,
+        equipoB: participantesAleatorios[i + 1].equipo,
+      };
+      enfrentamientos.push(enfrentamiento);
     }
-    setLlaves(nuevasLlaves);
+
+    // Guardar las llaves generadas en el estado y marcar llavesGeneradas como true
+    setLlaves(enfrentamientos);
     setLlavesGeneradas(true);
   };
 
@@ -119,6 +127,7 @@ const Torneo = () => {
         {sorteoRealizado && !llavesGeneradas && (
           <div>
             <h2>Resultados del Sorteo</h2>
+            <p>Torneo: {nombreTorneo}</p>
             <table>
               <thead>
                 <tr>
@@ -136,7 +145,7 @@ const Torneo = () => {
               </tbody>
             </table>
             <div>
-              <button onClick={handleSortearLlaves}>Sortear y Mostrar Llaves</button>
+              <button onClick={generarLlaves}>Generar Llaves</button>
             </div>
           </div>
         )}
@@ -146,11 +155,17 @@ const Torneo = () => {
         {llavesGeneradas && (
           <div>
             <h2>Llaves del Torneo</h2>
-            <ul>
-              {llaves.map((llave, index) => (
-                <li key={index}>{llave.enfrentamiento}</li>
+            <div className="bracket">
+              {llaves.map((enfrentamiento, enfrentamientoIndex) => (
+                <div key={enfrentamientoIndex} className="round">
+                  <div className="match">
+                    <span className="participant">{enfrentamiento.participanteA}</span>
+                    <span className="vs">vs</span>
+                    <span className="participant">{enfrentamiento.participanteB}</span>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </section>
@@ -159,4 +174,3 @@ const Torneo = () => {
 };
 
 export default Torneo;
-

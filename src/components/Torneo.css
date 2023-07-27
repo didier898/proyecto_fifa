@@ -1,0 +1,113 @@
+/* Torneo.css */
+
+/* Estilos generales */
+.bracket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.match {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.participant {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+}
+
+.vs {
+  margin: 0 12px;
+}
+
+/* Estilos por fase */
+.round-1 .match {
+  width: 200px;
+}
+
+.round-2 .match {
+  width: 250px;
+}
+
+.round-3 .match {
+  width: 300px;
+}
+
+.round-4 .match {
+  width: 350px;
+}
+
+.round-5 .match {
+  width: 400px;
+}
+
+.round-6 .match {
+  width: 450px;
+}
+
+.round-7 .match {
+  width: 500px;
+}
+
+.round-8 .match {
+  width: 550px;
+}
+
+.round-9 .match {
+  width: 600px;
+}
+
+.round-10 .match {
+  width: 650px;
+}
+
+.round-11 .match {
+  width: 700px;
+}
+
+.round-12 .match {
+  width: 750px;
+}
+
+.round-13 .match {
+  width: 800px;
+}
+
+.round-14 .match {
+  width: 850px;
+}
+
+.round-15 .match {
+  width: 900px;
+}
+
+.round-16 .match {
+  width: 950px;
+}
+
+.round-17 .match {
+  width: 1000px;
+}
+
+.round-18 .match {
+  width: 1050px;
+}
+
+.round-19 .match {
+  width: 1100px;
+}
+
+.round-20 .match {
+  width: 1150px;
+}
