@@ -12,7 +12,7 @@ const Torneo = () => {
   const [llavesGeneradas, setLlavesGeneradas] = useState(false);
   const [llaves, setLlaves] = useState([]);
   const [ganadorRondaActual, setGanadorRondaActual] = useState({});
-  const [ganadorAbsoluto, setGanadorAbsoluto] = useState('');
+  const [ganadorFinal, setGanadorFinal] = useState('');
 
   const handleNombreTorneoChange = (event) => {
     setNombreTorneo(event.target.value);
@@ -33,7 +33,7 @@ const Torneo = () => {
     setLlavesGeneradas(false);
     setLlaves([]);
     setGanadorRondaActual({});
-    setGanadorAbsoluto('');
+    setGanadorFinal('');
   };
 
   const handleSortearEquipos = () => {
@@ -51,7 +51,7 @@ const Torneo = () => {
       setLlavesGeneradas(false);
       setLlaves([]);
       setGanadorRondaActual({});
-      setGanadorAbsoluto('');
+      setGanadorFinal('');
     } else {
       alert('Error: La cantidad de participantes debe ser igual a la cantidad de equipos.');
     }
@@ -94,7 +94,7 @@ const Torneo = () => {
     setLlaves(enfrentamientos);
     setLlavesGeneradas(true);
     setGanadorRondaActual({});
-    setGanadorAbsoluto('');
+    setGanadorFinal('');
   };
 
   const handleSeleccionarGanador = (enfrentamientoIndex, ganador) => {
@@ -105,159 +105,174 @@ const Torneo = () => {
   const avanzarSiguienteRonda = () => {
     const ganadoresSiguienteRonda = [];
     for (let i = 0; i < llaves.length; i += 2) {
-      const ganadorA = ganadorRondaActual[i];
-      const ganadorB = ganadorRondaActual[i + 1];
-
-      // Verificar si tenemos un ganador absoluto en esta ronda
-      if (ganadorA && ganadorA === ganadorB) {
-        setGanadorAbsoluto(ganadorA);
-        return;
-      }
-
-      // Obtener los nombres de los participantes que pasaron a la siguiente ronda
-      const participanteA = ganadorA ? llaves[i].participanteA : llaves[i + 1].participanteA;
-      const equipoA = ganadorA ? llaves[i].equipoA : llaves[i + 1].equipoA;
-      const participanteB = ganadorA ? llaves[i + 1].participanteA : llaves[i].participanteA;
-      const equipoB = ganadorA ? llaves[i + 1].equipoA : llaves[i].equipoA;
+      const ganadorA = ganadorRondaActual[i] || llaves[i].participanteA;
+      const ganadorB = ganadorRondaActual[i + 1] || llaves[i].participanteB;
 
       ganadoresSiguienteRonda.push({
-        participanteA,
-        equipoA,
-        participanteB,
-        equipoB,
+        participanteA: ganadorA,
+        equipoA: llaves[i].equipoA,
+        participanteB: ganadorB,
+        equipoB: llaves[i].equipoB,
         resultado: '',
       });
     }
 
     setLlaves(ganadoresSiguienteRonda);
     setGanadorRondaActual({});
+    setGanadorFinal('');
+  };
+
+  const handleActualizarEnfrentamiento = (enfrentamientoIndex, resultado) => {
+    const nuevasLlaves = [...llaves];
+    nuevasLlaves[enfrentamientoIndex].resultado = resultado;
+    setLlaves(nuevasLlaves);
+  };
+
+  const handleSeleccionarGanadorFinal = (ganador) => {
+    setGanadorFinal(ganador);
   };
 
   return (
-    <div>
-      <h1>Torneo</h1>
+    <div className="container">
+      <div className="background"></div>
+      <div className="sidebar">
+        <img src="/FIFA-233.jpg" alt="Imagen de fifa" />
+        <p>
+          Descripción de la pagina: Esta pagina esta hecha para demostrar quien manda en fifa23, 
+          quien es el padre y quienes son sus hijitos en este juego.
+        </p>
+      </div>
+      <div className="main-content">
+        <h1>Torneo</h1>
 
-      <section>
-        {!sorteoRealizado && !llavesGeneradas && (
-          <div>
-            <h2>Crear Nuevo Torneo</h2>
+        <section>
+          {!sorteoRealizado && !llavesGeneradas && (
             <div>
-              <label>
-                Nombre del Torneo:
-                <input type="text" value={nombreTorneo} onChange={handleNombreTorneoChange} />
-              </label>
+              <h2>Crear Nuevo Torneo</h2>
+              <div>
+                <label>
+                  Nombre del Torneo:
+                  <input type="text" value={nombreTorneo} onChange={handleNombreTorneoChange} />
+                </label>
+              </div>
+              <div>
+                <button onClick={handleCrearTorneo}>Crear Torneo</button>
+                {torneoCreado && <span> - Torneo creado correctamente</span>}
+              </div>
             </div>
-            <div>
-              <button onClick={handleCrearTorneo}>Crear Torneo</button>
-              {torneoCreado && <span> - Torneo creado correctamente</span>}
-            </div>
-          </div>
-        )}
-      </section>
+          )}
+        </section>
 
-      <section>
-        {torneoCreado && !sorteoRealizado && !llavesGeneradas && (
-          <div>
-            <h2>Sorteo de Equipos</h2>
+        <section>
+          {torneoCreado && !sorteoRealizado && !llavesGeneradas && (
             <div>
-              <label>
-                Ingrese los nombres de los participantes (separados por comas):
-                <input type="text" value={participantes} onChange={handleParticipantesChange} />
-              </label>
+              <h2>Sorteo de Equipos</h2>
+              <div>
+                <label>
+                  Ingrese los nombres de los participantes (separados por comas):
+                  <input type="text" value={participantes} onChange={handleParticipantesChange} />
+                </label>
+              </div>
+              <div>
+                <label>
+                  Ingrese los nombres de los equipos (separados por comas):
+                  <input type="text" value={equipos} onChange={handleEquiposChange} />
+                </label>
+              </div>
+              <div>
+                <button onClick={handleSortearEquipos}>Sortear</button>
+              </div>
             </div>
-            <div>
-              <label>
-                Ingrese los nombres de los equipos (separados por comas):
-                <input type="text" value={equipos} onChange={handleEquiposChange} />
-              </label>
-            </div>
-            <div>
-              <button onClick={handleSortearEquipos}>Sortear</button>
-            </div>
-          </div>
-        )}
-      </section>
+          )}
+        </section>
 
-      <section>
-        {sorteoRealizado && !llavesGeneradas && (
-          <div>
-            <h2>Resultados del Sorteo</h2>
-            <p>Torneo: {nombreTorneo}</p>
-            <table>
-              <thead>
-                <tr>
-                  <th>Participante</th>
-                  <th>Equipo Asignado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {resultadosSorteo.map((resultado, index) => (
-                  <tr key={index}>
-                    <td>{resultado.participante}</td>
-                    <td>{resultado.equipo}</td>
+        <section>
+          {sorteoRealizado && !llavesGeneradas && (
+            <div>
+              <h2>Resultados del Sorteo</h2>
+              <p>Torneo: {nombreTorneo}</p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Participante</th>
+                    <th>Equipo Asignado</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <button onClick={generarLlaves}>Generar Llaves</button>
-          </div>
-        )}
-      </section>
+                </thead>
+                <tbody>
+                  {resultadosSorteo.map((resultado, index) => (
+                    <tr key={index}>
+                      <td>{resultado.participante}</td>
+                      <td>{resultado.equipo}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button onClick={generarLlaves}>Generar Llaves</button>
+            </div>
+          )}
+        </section>
 
-      <section>
-        {llavesGeneradas && (
-          <div>
-            <h2>Llaves del Torneo</h2>
-            <div className="bracket">
-              {llaves.map((enfrentamiento, enfrentamientoIndex) => (
-                <div key={enfrentamientoIndex} className="round">
-                  <div className="match">
-                    <span className="participant">
-                      {enfrentamiento.participanteA} ({enfrentamiento.equipoA})
-                    </span>
-                    <span className="vs">vs</span>
-                    <span className="participant">
-                      {enfrentamiento.participanteB} ({enfrentamiento.equipoB})
-                    </span>
-                    {enfrentamiento.resultado ? (
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="Marcador"
-                          value={enfrentamiento.resultado}
-                          onChange={(e) => handleActualizarEnfrentamiento(enfrentamientoIndex, e.target.value)}
-                        />
-                        <button onClick={() => handleActualizarEnfrentamiento(enfrentamientoIndex, '')}>
-                          Borrar
-                        </button>
-                      </div>
-                    ) : ganadorRondaActual[enfrentamientoIndex] ? (
+        <section>
+          {llavesGeneradas && (
+            <div>
+              <h2>Llaves del Torneo</h2>
+              <div className="bracket">
+                {llaves.map((enfrentamiento, enfrentamientoIndex) => (
+                  <div key={enfrentamientoIndex} className="round">
+                    <div className="match">
+                      <span className="participant">
+                        {enfrentamiento.participanteA} ({enfrentamiento.equipoA})
+                      </span>
+                      <span className="vs">vs</span>
+                      <span className="participant">
+                        {enfrentamiento.participanteB} ({enfrentamiento.equipoB})
+                      </span>
+                      {enfrentamiento.resultado ? (
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Marcador"
+                            value={enfrentamiento.resultado}
+                            onChange={(e) => handleActualizarEnfrentamiento(enfrentamientoIndex, e.target.value)}
+                          />
+                          <button onClick={() => handleActualizarEnfrentamiento(enfrentamientoIndex, '')}>
+                            Borrar
+                          </button>
+                        </div>
+                      ) : (
+                        <div>
+                          <button onClick={() => handleSeleccionarGanador(enfrentamientoIndex, enfrentamiento.participanteA)}>
+                            {enfrentamiento.participanteA}
+                          </button>
+                          <span className="vs">vs</span>
+                          <button onClick={() => handleSeleccionarGanador(enfrentamientoIndex, enfrentamiento.participanteB)}>
+                            {enfrentamiento.participanteB}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    {ganadorRondaActual[enfrentamientoIndex] && (
                       <div className="winner">
                         Ganador: {ganadorRondaActual[enfrentamientoIndex]}
                       </div>
-                    ) : ganadorAbsoluto ? (
-                      <div className="winner">
-                        Ganador Absoluto: {ganadorAbsoluto}
-                      </div>
-                    ) : (
-                      <div>
-                        <button onClick={() => handleSeleccionarGanador(enfrentamientoIndex, enfrentamiento.participanteA)}>
-                          {enfrentamiento.participanteA} - Seleccionar Ganador
-                        </button>
-                        <button onClick={() => handleSeleccionarGanador(enfrentamientoIndex, enfrentamiento.participanteB)}>
-                          {enfrentamiento.participanteB} - Seleccionar Ganador
-                        </button>
-                      </div>
                     )}
                   </div>
-                </div>
-              ))}
-              {ganadorAbsoluto && <div className="winner">Ganador Absoluto: {ganadorAbsoluto}</div>}
-              {!ganadorAbsoluto && <button onClick={avanzarSiguienteRonda}>Avanzar a la Siguiente Ronda</button>}
+                ))}
+              </div>
+              {Object.keys(ganadorRondaActual).length === llaves.length && (
+                <>
+                  <button onClick={avanzarSiguienteRonda}>Siguiente Ronda</button>
+                  {ganadorFinal && (
+                    <div className="winner-message">
+                      <console className="log">Felicidades, {ganadorFinal}, eres el papá de todos aquí.</console>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-          </div>
-        )}
-      </section>
+          )}
+        </section>
+      </div>
     </div>
   );
 };
