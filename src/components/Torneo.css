@@ -91,8 +91,8 @@
   
   /* Estilos para el mensaje del ganador final */
   .winner-message {
-    background-color: #000; /* Color de fondo negro */
-    color: #fff; /* Color de texto blanco */
+    background-color: #050000; /* Color de fondo negro */
+    color: #f2f7f2; /* Color de texto blanco */
     padding: 10px;
     margin-top: 20px;
     border-radius: 5px;

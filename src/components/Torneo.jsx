@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { shuffle } from 'lodash';
 import './Torneo.css'; // Importa tus estilos personalizados aquí
+import './Estilo.css';
 
 const Torneo = () => {
   const [nombreTorneo, setNombreTorneo] = useState('');
@@ -119,17 +120,18 @@ const Torneo = () => {
 
     setLlaves(ganadoresSiguienteRonda);
     setGanadorRondaActual({});
-    setGanadorFinal('');
+
+    // Verificar si ya tenemos un ganador final
+    if (ganadoresSiguienteRonda.length === 1) {
+      const ganadorFinal = ganadoresSiguienteRonda[0].participanteA;
+      setGanadorFinal(ganadorFinal);
+    }
   };
 
   const handleActualizarEnfrentamiento = (enfrentamientoIndex, resultado) => {
     const nuevasLlaves = [...llaves];
     nuevasLlaves[enfrentamientoIndex].resultado = resultado;
     setLlaves(nuevasLlaves);
-  };
-
-  const handleSeleccionarGanadorFinal = (ganador) => {
-    setGanadorFinal(ganador);
   };
 
   return (
@@ -260,14 +262,12 @@ const Torneo = () => {
                 ))}
               </div>
               {Object.keys(ganadorRondaActual).length === llaves.length && (
-                <>
-                  <button onClick={avanzarSiguienteRonda}>Siguiente Ronda</button>
-                  {ganadorFinal && (
-                    <div className="winner-message">
-                      <console className="log">Felicidades, {ganadorFinal}, eres el papá de todos aquí.</console>
-                    </div>
-                  )}
-                </>
+                <button onClick={avanzarSiguienteRonda}>Siguiente Ronda</button>
+              )}
+              {ganadorFinal && (
+                <div className="winner-message">
+                  <p>Felicidades, {ganadorFinal}, eres el papá de todos aquí.</p>
+                </div>
               )}
             </div>
           )}
